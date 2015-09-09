@@ -1,0 +1,21 @@
+{
+  "name": "lambda-rollbar-deploy",
+  "version": "0.0.0",
+  "description": "Notify rollbar about a new deployment on Elastic Beanstalk",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "contributors": [
+    "Sven Stam <sven.stam@gmail.com>"
+  ],
+  "author": "Legal Things <info@legalthings.net>",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "~2.1.45"
+  },
+  "devDependencies": {
+    "node-lambda": "~0.6.1",
+    "jasmine": "~2.3.2"
+  }
+}
