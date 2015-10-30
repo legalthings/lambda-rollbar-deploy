@@ -22,8 +22,7 @@ Ceate an [IAM role](https://console.aws.amazon.com/iam) with the following polic
             },
             {
                 "Action": [
-                    "elasticbeanstalk:DescribeApplications",
-                    "elasticbeanstalk:DescribeApplicationVersions"
+                    "elasticbeanstalk:DescribeEnvironments"
                 ],
                 "Effect": "Allow",
                 "Resource": [

@@ -35,7 +35,7 @@ exports.handler = function(event, context){
   rollbar.local_username = 'Elastic Beanstalk';
   
   // Load the revision from Elastic Beanstalk
-  loadRevision(notification.Application, function(err, revision){
+  loadRevision(notification.Application, notification.Environment, function(err, revision){
     if (err) return context.fail(err);
 
     // Set the revision in the Rollbar deploy message
@@ -54,7 +54,7 @@ exports.handler = function(event, context){
         "Application: " + notification.Application,
         "Environment: " + rollbar.environment,
         "Revision: " + rollbar.revision
-      ].join(" "));
+      ].join(" | "));
     })
   });
 };
@@ -69,7 +69,7 @@ function parseEvent(event) {
   var messageLines = event.Message.split("\n");
   async.each(messageLines, function (line) {
     var messageItem = line.split(": ");
-    if(messageItem[0] && messageItem[0]!='') {
+    if (messageItem[0] && messageItem[0] != '') {
       notification[messageItem[0]] = messageItem[1].trim();
     }
   });
@@ -78,20 +78,32 @@ function parseEvent(event) {
 }
 
 /**
- * Read the revision of the latest released version of the elastic beanstalk application
+ * Read the revision of the deployed version of the elastic beanstalk environment
+ *
  * @param applicationName Name of the EB application
+ * @param environmentName Name of the EB environment
  * @param callback Revision hash
  */
-var loadRevision = function(applicationName, callback) {
-  eb.describeApplicationVersions({ApplicationName: applicationName}, function(err, data) {
+var loadRevision = function(applicationName, environmentName, callback) {
+  var params = {
+    ApplicationName: applicationName, 
+    EnvironmentNames: [environmentName],
+    IncludeDeleted: false
+  };
+  
+  eb.describeEnvironments(params, function(err, data) {
     if (err) {
       console.log(err, err.stack);
       return callback(err);
     }
 
     // get the last version to extract the commit hash
-    var lastVersion = data.ApplicationVersions[0];
-    var revision = (lastVersion ? lastVersion.VersionLabel : 'Unknown');
+    var environment = data.Environments[0];
+    if (!environment) {
+      return callback("Failed to find environment on Elastic Beanstalk");
+    }
+    
+    var revision = environment.VersionLabel;
     callback(null, revision);
   });
 }
