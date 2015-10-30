@@ -33,7 +33,7 @@ exports.handler = function(event, context){
     ? settings.environment[notification.Environment]
     : settings.environment;
   rollbar.local_username = 'Elastic Beanstalk';
-
+  
   // Load the revision from Elastic Beanstalk
   loadRevision(notification.Application, function(err, revision){
     if (err) return context.fail(err);
@@ -49,7 +49,12 @@ exports.handler = function(event, context){
         context.fail(result.message);
       }
 
-      context.succeed("Successfully send deploy to Rollbar. Environment: " + rollbar.environment + " Revision: " + rollbar.revision);
+      context.succeed([
+        "Successfully send deploy to Rollbar.",
+        "Application: " + notification.Application,
+        "Environment: " + rollbar.environment,
+        "Revision: " + rollbar.revision
+      ].join(" "));
     })
   });
 };

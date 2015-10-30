@@ -1,9 +1,11 @@
 {
-  "Type" : "Notification",
-  "MessageId" : "00000000-0000-0000-0000-000000000000",
-  "TopicArn" : "arn:aws:sns:eu-west-1:000000000000:ElasticBeanstalkNotifications-Environment-myapp-env",
-  "Subject" : "AWS Elastic Beanstalk Notification - New application version was deployed to running EC2 instances",
-  "Message" : "Timestamp: Mon Sep 14 10:32:03 UTC 2015\nMessage: New application version was deployed to running EC2 instances.\n\nEnvironment: myapp-env\nApplication: myapp\n\nEnvironment URL: http://myapp-env.elasticbeanstalk.com\nRequestId: 99999999-9999-9999-9999-999999999999\nNotificationProcessId: 99999999-aaaa-9999-9999-999999999999",
-  "Timestamp" : "2015-09-14T10:32:11.026Z"
+  "Roles": [
+    {
+      "Sns": {
+        "Type" : "Notification",
+        "Message" : "Message: New application version was deployed to running EC2 instances.\n\nEnvironment: myapp-env\nApplication: myapp"
+      }
+    }
+  ]
 }
 
