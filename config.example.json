@@ -1,0 +1,7 @@
+{
+  "myapp": {
+    "rollbar_access_tokens": "",
+    "environment": "production"
+  }
+}
+

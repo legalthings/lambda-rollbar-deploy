@@ -3,36 +3,53 @@ const URL = "https://api.rollbar.com/api/1/deploy/";
 var AWS = require('aws-sdk');
 var async = require('async');
 var eb = new AWS.ElasticBeanstalk();
-var secret = require("./secret.json");
+var config = require("./config.json");
 
 exports.handler = function(event, context){
   'use strict';
 
   // Parse the Message part from the event
   var notification = parseEvent(event.Records[0].Sns);
+  
+  // Get the configuration for this application
+  if (typeof config[notification.Application] === 'undefined') {
+      context.fail(notification.Application + " not configured");
+      return;
+  }
+  
+  settings = config[notification.Application];
+  if (
+    typeof settings.environment === 'object' &&
+    typeof settings.environment[notification.Environment] === 'undefined'
+  ) {
+    context.fail("Rollbar environment for " + notification.Environment  + " not configured");
+    return;
+  }
 
   // Add the Environment to the Rollbar deploy message
   var rollbar = {};
-  rollbar.access_token = secret.rollbar_access_token;
-  rollbar.environment = notification.Environment;
+  rollbar.access_token = settings.rollbar_access_token;
+  rollbar.environment = typeof settings.environment === 'object'
+    ? settings.environment[notification.Environment]
+    : settings.environment;
   rollbar.local_username = 'Elastic Beanstalk';
 
   // Load the revision from Elastic Beanstalk
   loadRevision(notification.Application, function(err, revision){
-
-    if(err) return context.fail(err);
+    if (err) return context.fail(err);
 
     // Set the revision in the Rollbar deploy message
     rollbar.revision = revision;
+    
     // Send the deploy message to Rollbar
     sendRollbarDeploy(rollbar, function(err, result){
-      if(err) return context.fail(err);
+      if (err) return context.fail(err);
 
-      if(result.err) {
+      if (result.err) {
         context.fail(result.message);
       }
 
-      context.succeed("Successfully send deploy to Rollbar. Environment: " + rollbar.environment + " Revision: "+rollbar.revision);
+      context.succeed("Successfully send deploy to Rollbar. Environment: " + rollbar.environment + " Revision: " + rollbar.revision);
     })
   });
 };
