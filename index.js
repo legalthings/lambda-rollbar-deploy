@@ -17,7 +17,7 @@ exports.handler = function(event, context){
       return;
   }
   
-  settings = config[notification.Application];
+  var settings = config[notification.Application];
   if (
     typeof settings.environment === 'object' &&
     typeof settings.environment[notification.Environment] === 'undefined'
