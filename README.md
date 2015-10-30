@@ -6,6 +6,38 @@ Notify rollbar about a new deployment on Elastic Beanstalk
  
     npm install
     
+Ceate an [IAM role](https://console.aws.amazon.com/iam) with the following policy:
+
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                  "Action": [
+                      "logs:CreateLogGroup",
+                      "logs:CreateLogStream",
+                      "logs:PutLogEvents"
+                  ],
+                  "Resource": "arn:aws:logs:*:*:*"
+            },
+            {
+                "Action": [
+                    "elasticbeanstalk:DescribeApplications",
+                    "elasticbeanstalk:DescribeApplicationVersions"
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                    "*"
+                ]
+            }
+        ]
+    }
+
+Setup node-lambda and edit the generated `.env` file:
+
+    node_modules/.bin/node-lambda setup
+    editor .env
+
 ## Configuration
 
     cp config.example.json
