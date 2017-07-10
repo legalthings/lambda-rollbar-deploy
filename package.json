@@ -17,7 +17,7 @@
     "request": "^2.61.0"
   },
   "devDependencies": {
-    "node-lambda": "~0.6.1",
+    "node-lambda": "~0.11.3",
     "jasmine": "~2.3.2"
   }
 }

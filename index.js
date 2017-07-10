@@ -46,11 +46,11 @@ exports.handler = function(event, context){
       if (err) return context.fail(err);
 
       if (result.err) {
-        context.fail(result.message);
+        context.fail("Rollbar API call: " + result.message);
       }
 
       context.succeed([
-        "Successfully send deploy to Rollbar.",
+        "Successfully sent deploy to Rollbar.",
         "Application: " + notification.Application,
         "Environment: " + rollbar.environment,
         "Revision: " + rollbar.revision
@@ -100,7 +100,7 @@ var loadRevision = function(applicationName, environmentName, callback) {
     // get the last version to extract the commit hash
     var environment = data.Environments[0];
     if (!environment) {
-      return callback("Failed to find environment on Elastic Beanstalk");
+      return callback("Failed to find environment " + environmentName + " in application " + applicationName + " on Elastic Beanstalk");
     }
     
     var revision = environment.VersionLabel;
